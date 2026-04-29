@@ -13,11 +13,11 @@ if [ "$SHELL_NAME" = "bash" ]; then
 fi
 
 printf '\n🍎 Solo macOS Installer\n'
-printf 'This can be pasted directly into Terminal. It installs into ~/.solo and avoids system Python.\n\n'
+printf 'Paste once. Installs Solo, caches the solo command, then launches chat.\n\n'
 
 if [ "$(id -u)" = "0" ]; then
   printf '⚠️  You are running as root. Solo is meant to install as your normal macOS user.\n'
-  printf 'Continuing anyway, but ~/.solo will belong to root. Press Ctrl+C to stop if that is not what you want.\n'
+  printf 'Continuing anyway, but ~/.solo will belong to root. Press Ctrl+C to stop if that is not intended.\n'
   sleep 3
 fi
 
@@ -104,6 +104,13 @@ WEBHOOK_SECRET=change-me
 EOF
 fi
 
+cat > "$HOME/solo" <<EOC
+#!/usr/bin/env bash
+cd "$APP_DIR"
+"$VENV_DIR/bin/python" solo_cli.py
+EOC
+chmod +x "$HOME/solo"
+
 cat > "$HOME/solo-start" <<EOC
 #!/usr/bin/env bash
 cd "$APP_DIR"
@@ -119,15 +126,19 @@ EOC
 chmod +x "$HOME/solo-logs"
 
 mkdir -p "$HOME/bin"
+ln -sf "$HOME/solo" "$HOME/bin/solo"
 ln -sf "$HOME/solo-start" "$HOME/bin/solo-start"
 ln -sf "$HOME/solo-logs" "$HOME/bin/solo-logs"
 
 if ! echo "$PATH" | grep -q "$HOME/bin"; then
   echo 'export PATH="$HOME/bin:$PATH"' >> "$PROFILE_FILE"
+  export PATH="$HOME/bin:$PATH"
 fi
 
 printf '\n✅ Solo installed on macOS.\n'
-printf 'Run now with: ~/solo-start\n'
-printf 'Or open a new Terminal and run: solo-start\n'
-printf 'Logs: ~/solo-logs\n'
+printf 'From now on, open Terminal and type: solo\n'
+printf 'Engine mode: solo-start\n'
+printf 'Logs: solo-logs\n'
 printf 'Config: ~/.solo/.env\n\n'
+printf '🚀 Launching Solo chat now...\n\n'
+exec "$HOME/bin/solo"
