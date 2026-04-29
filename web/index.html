@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>1PA</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<main class="cockpit">
+<section class="left panel">
+<pre class="brand">1PA</pre>
+<div id="chat" class="chat"></div>
+<form id="chatForm" class="inputRow">
+<span class="prompt">solo&gt;</span>
+<input id="chatInput" autocomplete="off" placeholder="type to Solo">
+<button>send</button>
+</form>
+</section>
+<section class="right panel lattice">
+<div class="cell"><h3>ENGINE</h3><p id="engine">checking</p></div>
+<div class="cell"><h3>MODEL</h3><p id="model">DeepSeek 7B</p></div>
+<div class="cell"><h3>MODE</h3><p id="live">paper</p></div>
+<div class="cell"><h3>LAST SIGNAL</h3><p id="lastSignal">none</p></div>
+<div class="cell wide"><h3>LOGS</h3><pre id="logs"></pre></div>
+</section>
+</main>
+<script src="/app.js"></script>
+</body>
+</html>
