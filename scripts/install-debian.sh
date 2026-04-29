@@ -1,27 +1,41 @@
 #!/usr/bin/env bash
 set -e
 
-echo "🔥 Installing Solo on Debian/Ubuntu"
+APP_DIR="$HOME/.solo/app"
+VENV_DIR="$HOME/.solo/venv"
+ENV_FILE="$HOME/.solo/.env"
+
+printf '\n🔥 Installing Solo on Debian/Ubuntu\n'
 
 sudo apt update
-sudo apt install -y python3 python3-pip curl
+sudo apt install -y git curl python3 python3-pip python3-venv python3-full
 
 # Install Ollama if not present
-if ! command -v ollama &> /dev/null; then
+if ! command -v ollama >/dev/null 2>&1; then
   curl -fsSL https://ollama.com/install.sh | sh
 fi
 
 ollama pull deepseek-coder:6.7b || true
 
-mkdir -p ~/.solo
-cd ~/.solo
+mkdir -p "$HOME/.solo"
 
-git clone https://github.com/Kelushael/solo.git app || true
-cd app
+if [ -d "$APP_DIR/.git" ]; then
+  printf '\n🔄 Solo app already exists. Updating repo...\n'
+  cd "$APP_DIR"
+  git pull --ff-only || true
+else
+  printf '\n📦 Cloning Solo app...\n'
+  rm -rf "$APP_DIR"
+  git clone https://github.com/Kelushael/solo.git "$APP_DIR"
+fi
 
-pip3 install -r requirements.txt
+printf '\n🐍 Creating Python virtual environment...\n'
+python3 -m venv "$VENV_DIR"
+"$VENV_DIR/bin/python" -m pip install --upgrade pip
+"$VENV_DIR/bin/pip" install -r "$APP_DIR/requirements.txt"
 
-cat > ~/.solo/.env <<EOF
+if [ ! -f "$ENV_FILE" ]; then
+  cat > "$ENV_FILE" <<EOF
 SOLO_HOST=0.0.0.0
 SOLO_PORT=8787
 SOLO_LIVE=0
@@ -33,12 +47,21 @@ MAX_CONTRACTS=2
 DAILY_EXIT_EST=16:45
 WEBHOOK_SECRET=change-me
 EOF
+fi
 
-cat > ~/solo-start <<'EOC'
+cat > "$HOME/solo-start" <<EOC
 #!/usr/bin/env bash
-cd ~/.solo/app
-python3 solo_agent.py
+cd "$APP_DIR"
+"$VENV_DIR/bin/python" solo_agent.py
 EOC
-chmod +x ~/solo-start
+chmod +x "$HOME/solo-start"
 
-echo "✅ Solo installed. Run: ~/solo-start"
+cat > "$HOME/solo-logs" <<EOC
+#!/usr/bin/env bash
+tail -f "$HOME/.solo/logs/solo.jsonl"
+EOC
+chmod +x "$HOME/solo-logs"
+
+printf '\n✅ Solo installed. Run: ~/solo-start\n'
+printf '📜 Logs: ~/solo-logs\n'
+printf '⚙️ Config: ~/.solo/.env\n'
