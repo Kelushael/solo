@@ -24,18 +24,27 @@ WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET", "change-me")
 console = Console()
 
 ART = r'''
-   ██████╗  ██████╗  ██╗      ██████╗ 
-  ██╔═████╗██╔═══██╗███║     ██╔═══██╗
-  ██║██╔██║██║   ██║╚██║     ██║   ██║
-  ████╔╝██║██║   ██║ ██║     ██║   ██║
-  ╚██████╔╝╚██████╔╝ ██║     ╚██████╔╝
-   ╚═════╝  ╚═════╝  ╚═╝      ╚═════╝ 
+██╗██████╗  █████╗ 
+██║██╔══██╗██╔══██╗
+██║██████╔╝███████║
+██║██╔═══╝ ██╔══██║
+██║██║     ██║  ██║
+╚═╝╚═╝     ╚═╝  ╚═╝
 
-        1PA SOLO TERMINAL // YELLOW SIGNAL CORE
-        TradingView → Solo → DeepSeek → TradersPost
+        1PA
 '''
 
-SYSTEM = """You are Solo, a local terminal trading assistant. Help reason about trading signals, risk, configuration, and strategy. Be practical. Do not guarantee profits. Treat live trading as high risk."""
+SYSTEM = """
+You are Solo, a local terminal trading assistant for 1PA PRO v6.
+1PA PRO v6 automated trading bot context:
+- Connects TradingView alerts to Tradovate and NinjaTrader 8 workflows.
+- Instruments: NQ, MNQ, GC, MGC.
+- Includes Big Run Mode, Adaptive Stop, Early Warn exits, Divergence signals, Vol Reversal signals, and Daily P&L limits.
+- A+ grade and score threshold rules matter.
+- Treat live trading as high risk and never guarantee profit.
+- Help the user reason about signals, risk, configuration, and strategy.
+- Be practical, direct, and execution-aware.
+"""
 
 HELP = """
 Commands:
